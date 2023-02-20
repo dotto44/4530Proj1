@@ -47,7 +47,8 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
 
         thumbnail = findViewById<View>(R.id.thumbnail) as ImageView
         if (savedInstanceState != null) {
-            thumbnail!!.setImageBitmap(savedInstanceState.getParcelable("FN_TEXT"))
+            thumbnailImage = savedInstanceState.getParcelable("IMAGE_DATA")
+            thumbnail!!.setImageBitmap(thumbnailImage)
         }
     }
 
@@ -74,21 +75,20 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
                     messageIntent.putExtra("FIRST_NAME_STRING", firstName)
                     messageIntent.putExtra("LAST_NAME_STRING", lastName)
                     messageIntent.putExtra("MIDDLE_NAME_STRING", middleName)
+                    messageIntent.putExtra("IMAGE_DATA", thumbnailImage)
                     this.startActivity(messageIntent)
                 }
             }
             R.id.cameraButton-> {
                 val cameraIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
                 try{
-                    cameraActivity.launch(cameraIntent)
-                }catch(ex: ActivityNotFoundException){
-                    //Do something here
-                }
+                    cameraLauncher.launch(cameraIntent)
+                }catch(ex: ActivityNotFoundException){}
             }
         }
     }
 
-    private val cameraActivity = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){ result ->
+    private val cameraLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){ result ->
         if(result.resultCode == RESULT_OK) {
             if (Build.VERSION.SDK_INT >= 33) {
                 thumbnailImage = result.data!!.getParcelableExtra("data", Bitmap::class.java)
