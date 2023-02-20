@@ -6,4 +6,23 @@
     android:layout_height="match_parent"
     tools:context=".LoggedInActivity">
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center_vertical|center_horizontal"
+        android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/loggedText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="0dp"
+        android:layout_marginTop="0dp"
+        android:layout_marginBottom="10dp"
+        android:text="is logged in!"
+        android:textSize="20dp"
+        app:layout_constraintEnd_toStartOf="@+id/titleText"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent" />
+    </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -44,17 +44,17 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
                 lastName = lastEditText.text.toString()
 
                 //Check if the EditText string for first/last is empty
-                if (firstName.isNulOrBlank() || lastName.isNullOrBlank()) {
-                    //Complain that there's no text
+                if (firstName.isNullOrBlank() || lastName.isNullOrBlank()) {
+                    // If not, throw an error message
                     Toast.makeText(this@MainActivity, "Enter at least a first and last name!", Toast.LENGTH_SHORT)
                         .show()
                 } else {
-                    //Reward them for submitting their names
+                    // Logged in message
                     Toast.makeText(this@MainActivity, "Logged in!", Toast.LENGTH_SHORT).show()
 
-                    //Start an activity and pass the EditText string to it.
+                    //Start an activity and pass the name strings to it.
                     val messageIntent = Intent(this, LoggedInActivity::class.java)
-                    messageIntent.putExtra("ET_STRING", firstName)
+                    messageIntent.putExtra("NAME_STRING", firstName + " " + lastName)
                     this.startActivity(messageIntent)
                 }
             }
