@@ -6,7 +6,9 @@ import android.widget.Button
 import android.widget.TextView
 
 class LoggedInActivity : AppCompatActivity() {
-    private var name: String? = null
+    private var firstName: String? = null
+    private var lastName: String? = null
+    private var middleName: String? = null
 
     // UI components
     private lateinit var nameText: TextView;
@@ -18,13 +20,21 @@ class LoggedInActivity : AppCompatActivity() {
         val receivedIntent = intent
 
         //Get the string data
-        name = receivedIntent.getStringExtra("NAME_STRING")
+        firstName = receivedIntent.getStringExtra("FIRST_NAME_STRING")
+        lastName = receivedIntent.getStringExtra("LAST_NAME_STRING")
+        middleName = receivedIntent.getStringExtra("MIDDLE_NAME_STRING")
 
         //Get the UI objects
         nameText = window.findViewById(R.id.loggedText);
 
 
         //Set the name component
-        nameText.text = name + " is logged in!"
+        nameText.text = firstName + " " + lastName + " is logged in!"
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+
+
     }
 }

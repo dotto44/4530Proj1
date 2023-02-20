@@ -2,13 +2,14 @@ package com.example.a4530proj1
 
 import android.content.ActivityNotFoundException
 import android.content.Intent
+import android.graphics.Bitmap
+import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.MediaStore
 import android.view.View
-import android.widget.Button
-import android.widget.EditText
-import android.widget.Toast
+import android.widget.*
+import androidx.activity.result.contract.ActivityResultContracts
 
 class MainActivity : AppCompatActivity(), View.OnClickListener {
     // Three names entered by the user
@@ -16,11 +17,19 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
     private var middleName: String? = null
     private var lastName: String? = null
 
+    // The thumbnail image data
+    private var thumbnailImage: Bitmap? = null
+
     // UI components
     private lateinit var submitButton: Button;
+    private lateinit var cameraButton: Button;
+
     private lateinit var firstEditText: EditText;
     private lateinit var middleEditText: EditText;
     private lateinit var lastEditText: EditText;
+
+    private var thumbnail: ImageView? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -29,9 +38,17 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         submitButton = window.findViewById(R.id.submitButton);
         submitButton.setOnClickListener(this);
 
+        cameraButton = window.findViewById(R.id.cameraButton);
+        cameraButton.setOnClickListener(this);
+
         firstEditText = window.findViewById(R.id.firstNameEditText);
         middleEditText = window.findViewById(R.id.middleNameEditText);
         lastEditText = window.findViewById(R.id.lastNameEditText);
+
+        thumbnail = findViewById<View>(R.id.thumbnail) as ImageView
+        if (savedInstanceState != null) {
+            thumbnail!!.setImageBitmap(savedInstanceState.getParcelable("FN_TEXT"))
+        }
     }
 
     override fun onClick(view : View) {
@@ -54,18 +71,40 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
 
                     //Start an activity and pass the name strings to it.
                     val messageIntent = Intent(this, LoggedInActivity::class.java)
-                    messageIntent.putExtra("NAME_STRING", firstName + " " + lastName)
+                    messageIntent.putExtra("FIRST_NAME_STRING", firstName)
+                    messageIntent.putExtra("LAST_NAME_STRING", lastName)
+                    messageIntent.putExtra("MIDDLE_NAME_STRING", middleName)
                     this.startActivity(messageIntent)
                 }
             }
             R.id.cameraButton-> {
                 val cameraIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
                 try{
-                    //cameraLauncher.launch(cameraIntent)
+                    cameraActivity.launch(cameraIntent)
                 }catch(ex: ActivityNotFoundException){
                     //Do something here
                 }
             }
         }
+    }
+
+    private val cameraActivity = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){ result ->
+        if(result.resultCode == RESULT_OK) {
+            if (Build.VERSION.SDK_INT >= 33) {
+                thumbnailImage = result.data!!.getParcelableExtra("data", Bitmap::class.java)
+                thumbnail!!.setImageBitmap(thumbnailImage)
+            }
+            else{
+                thumbnailImage = result.data!!.getParcelableExtra<Bitmap>("data")
+                thumbnail!!.setImageBitmap(thumbnailImage)
+            }
+        }
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+
+        // save the image data
+        outState.putParcelable("IMAGE_DATA", thumbnailImage)
     }
 }
